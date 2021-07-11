@@ -44,11 +44,9 @@ def create_layout(width: int, height: int) -> str:
     return table
 
 
-# To clear the screen.
 print(term.clear)
 
-# To print the title Modern Meerkats and centre it as much as i can.
-print(term.move_right(WIDTH//2 - 5) + f"{term.cyan}Modern Meerkats{term.normal}")
+print(term.center(f"{term.cyan}Modern Meerkats{term.normal}", width=WIDTH + 2, fillchar=" "))
 
 # Creating the line that seperates the code user input area from the history/command box area.
 input_area_dashes = ""
