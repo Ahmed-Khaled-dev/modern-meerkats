@@ -1,0 +1,2 @@
+blessed==1.18.1
+pydantic==1.8.2
