@@ -29,3 +29,7 @@ build/
 .vscode/
 # MacOS
 .DS_Store
+
+
+# Dev
+_script.py
