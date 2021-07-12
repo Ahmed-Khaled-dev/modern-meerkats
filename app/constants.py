@@ -29,3 +29,4 @@ CMDHELP_Y = MAP_Y
 # Keys
 BACKSPACE = 263
 ENTER = 343
+DEBUG_KEY = 331  # insert
