@@ -1,3 +1,5 @@
+import time
+
 from pydantic import BaseModel
 
 from app import constants as const
@@ -39,6 +41,16 @@ class LevelScreen(BaseModel):
                             self.user_input.current_input
                         )
                         self.user_input.current_input = ""
+                    elif key.code == const.DEBUG_KEY:
+                        break
                     else:
                         self.user_input.current_input += key.lower()
                     self._render()
+
+    def animate_map(self, windows: list[MapWindow]) -> None:
+        """Render a sequence of map mutations"""
+        with term.fullscreen(), term.cbreak(), term.hidden_cursor():
+            for w in windows:
+                self.map = w
+                self._render()
+                time.sleep(0.2)
