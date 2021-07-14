@@ -1,3 +1,4 @@
+import string
 import time
 
 from pydantic import BaseModel
@@ -44,7 +45,7 @@ class LevelScreen(BaseModel):
         with term.fullscreen(), term.cbreak():
             self._render_initial()
             while True:
-                if key := term.inkey(timeout=1):
+                if key := term.inkey():
                     if key.code == const.BACKSPACE:
                         self.user_input.current_input = self.user_input.current_input[
                             :-1
@@ -67,7 +68,7 @@ class LevelScreen(BaseModel):
                                 print(w.content)
                                 time.sleep(0.2)
                         print(self.user_input.prompt, end="", flush=True)
-                    else:
+                    elif key.lower() in string.ascii_letters or key in string.digits:
                         self.user_input.current_input += key.lower()
                         print(self.user_input.window.body)
                         print(self.user_input.prompt, end="", flush=True)
