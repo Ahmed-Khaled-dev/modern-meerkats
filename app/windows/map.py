@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 from app import constants as const
 from app.types.hitbox import HitBox
-from app.windows.core import Window
+from app.windows.core import Window, term
 
 
 class MapWindow(BaseModel):
@@ -32,4 +32,4 @@ class MapWindow(BaseModel):
     @property
     def content(self) -> str:
         """Return the inner content area of a map"""
-        return "".join([str(b) for b in self.boxes])
+        return "".join([b.render_str(term) for b in self.boxes])

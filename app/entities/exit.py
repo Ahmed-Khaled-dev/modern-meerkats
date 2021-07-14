@@ -20,6 +20,7 @@ class Exit(BaseModel):
                 pos_y=self.pos_y,
                 content=str(self) if t > 0 else str(self) + "<-- exit",
                 time=t,
+                parent=self.__class__,
             )
             for t in range(0, time)
         ]

@@ -16,11 +16,11 @@ def main() -> None:
     player = Player(
         start_y=7,
         start_x=7,
-        moves=[],
+        actions=[],
     )
-    player.add_move(10, "r")
-    player.add_move(6, "d")
-    player.add_move(10, "r")
+    player.add_move(10, "right")
+    player.add_move(6, "down")
+    player.add_move(10, "right")
     screen = LevelScreen(
         level=TestLevel(),
         player=player,

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from app.entities.exit import Exit
 from app.entities.player import Player
-from app.entities.static import Wall
+from app.entities.wall import Wall
 from app.types.hitbox import HitBox
 from app.windows.map import MapWindow
 
@@ -22,9 +22,9 @@ class TestLevel(BaseModel):
             Wall.create_line(5, 5, 5, "v"),
             Wall.create_line(20, 5, 5, "v"),
             Wall.create_line(5, 10, 7, "h"),
-            [Exit(pos_x=60, pos_y=20)],
+            [Exit(pos_x=16, pos_y=7)],
         )
-        boxes = itertools.chain(*[x.to_hitbox(len(player.moves)) for x in static])
+        boxes = itertools.chain(*[x.to_hitbox(player.time_consumed) for x in static])
         entity_table = {}
         for b in boxes:
             if b.time not in entity_table:
