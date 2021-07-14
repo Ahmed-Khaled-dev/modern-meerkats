@@ -36,8 +36,10 @@ class CmdListwindow(BaseModel):
             ]
         )
 
-    def __str__(self) -> str:
-        window = Window(
+    @property
+    def window(self) -> Window:
+        """Return the window entity for command list"""
+        return Window(
             title="Your Plan",
             width=self.width,
             height=self.height,
@@ -45,4 +47,3 @@ class CmdListwindow(BaseModel):
             pos_y=self.pos_y,
             content=self._content,
         )
-        return str(window)

@@ -33,8 +33,10 @@ class CmdHelpWindow(BaseModel):
             ]
         )
 
-    def __str__(self) -> str:
-        window = Window(
+    @property
+    def window(self) -> Window:
+        """Return the window entity for command help"""
+        return Window(
             title="Help",
             width=self.width,
             height=self.height,
@@ -42,4 +44,3 @@ class CmdHelpWindow(BaseModel):
             pos_y=self.pos_y,
             content=self._content,
         )
-        return str(window)

@@ -81,7 +81,8 @@ class Window(BaseModel):
         return border
 
     @property
-    def _body(self) -> str:
+    def body(self) -> str:
+        """Return the wrapped body content"""
         lines = self._content_lines
         res = []
         for index in range(1, self.height + 1):
@@ -91,7 +92,8 @@ class Window(BaseModel):
         return "".join(res)
 
     @property
-    def _border(self) -> str:
+    def border(self) -> str:
+        """Return the border window"""
         return "".join(
             [
                 self.border_color,
@@ -102,6 +104,3 @@ class Window(BaseModel):
                 term.normal,
             ]
         )
-
-    def __str__(self) -> str:
-        return self._border + self._body

@@ -16,9 +16,11 @@ class MapWindow(BaseModel):
     pos_x: int = const.MAP_X
     pos_y: int = const.MAP_Y
 
-    def __str__(self) -> str:
+    @property
+    def window(self) -> Window:
+        """Return the window entity for map"""
         title = f"Level {self.level_number} - {self.level_name}"
-        window = Window(
+        return Window(
             title=title,
             width=self.width,
             height=self.height,
@@ -26,5 +28,8 @@ class MapWindow(BaseModel):
             pos_y=self.pos_y,
             content=None,
         )
-        box_str = "".join([str(b) for b in self.boxes])
-        return str(window) + box_str
+
+    @property
+    def content(self) -> str:
+        """Return the inner content area of a map"""
+        return "".join([str(b) for b in self.boxes])

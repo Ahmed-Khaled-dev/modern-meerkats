@@ -16,12 +16,10 @@ player.add_move(10, "r")
 player.add_move(6, "d")
 player.add_move(10, "r")
 screen = LevelScreen(
-    map=level.initial(player),
+    level=TestLevel(),
+    player=player,
     user_input=UserInputWindow(),
     cmd_help=CmdHelpWindow(allowed_commands=[Cmd.Move]),
     cmd_list=CmdListwindow(max_commands=4),
 )
-screen.launch()
-seq = level.sequence(player)
-screen.animate_map(windows=seq)
 screen.launch()

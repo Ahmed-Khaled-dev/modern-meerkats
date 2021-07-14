@@ -39,8 +39,10 @@ class UserInputWindow(BaseModel):
             ]
         )
 
-    def __str__(self) -> str:
-        window = Window(
+    @property
+    def window(self) -> Window:
+        """Return the window user input"""
+        return Window(
             title="Input",
             width=self.width,
             height=self.height,
@@ -48,4 +50,3 @@ class UserInputWindow(BaseModel):
             pos_y=self.pos_y,
             content=self._content,
         )
-        return str(window)
