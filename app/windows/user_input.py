@@ -5,8 +5,6 @@ from pydantic import BaseModel
 from app import constants as const
 from app.windows.core import Window, term
 
-PROMPT_LINE = "  >> "
-
 
 class UserInputWindow(BaseModel):
     """Window for dealing with user input"""
@@ -26,7 +24,7 @@ class UserInputWindow(BaseModel):
     def prompt(self) -> str:
         """Draw the prompt and move cursor to right location for input"""
         x, y = self._cursor_loc
-        return term.move_xy(x + 2, y) + PROMPT_LINE + self.current_input
+        return term.move_xy(x + 2, y) + const.PROMPT_LINE + self.current_input
 
     @property
     def _content(self) -> str:

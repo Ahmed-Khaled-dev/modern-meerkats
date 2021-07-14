@@ -68,7 +68,9 @@ class LevelScreen(BaseModel):
                                 print(w.content)
                                 time.sleep(0.2)
                         print(self.user_input.prompt, end="", flush=True)
-                    elif key.lower() in string.ascii_letters or key in string.digits:
+                    elif (
+                        key.lower() in string.ascii_letters or key in string.digits
+                    ) and len(self.user_input.current_input) < const.INPUT_MAX_LENGTH:
                         self.user_input.current_input += key.lower()
                         print(self.user_input.window.body)
                         print(self.user_input.prompt, end="", flush=True)
