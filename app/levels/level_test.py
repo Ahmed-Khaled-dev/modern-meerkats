@@ -2,6 +2,7 @@ import itertools
 
 from pydantic import BaseModel
 
+from app.entities.exit import Exit
 from app.entities.player import Player
 from app.entities.static import Wall
 from app.types.hitbox import HitBox
@@ -16,15 +17,16 @@ class TestLevel(BaseModel):
 
     def entities(self, player: Player) -> dict[int, list[HitBox]]:
         """Entity lookup table of time to hitbox list"""
-        walls = itertools.chain(
+        static = itertools.chain(
             Wall.create_line(5, 5, 15, "h"),
             Wall.create_line(5, 5, 5, "v"),
             Wall.create_line(20, 5, 5, "v"),
             Wall.create_line(5, 10, 7, "h"),
+            [Exit(pos_x=60, pos_y=20)],
         )
-        wall_boxes = itertools.chain(*[x.to_hitbox(len(player.moves)) for x in walls])
+        boxes = itertools.chain(*[x.to_hitbox(len(player.moves)) for x in static])
         entity_table = {}
-        for b in wall_boxes:
+        for b in boxes:
             if b.time not in entity_table:
                 entity_table[b.time] = [b]
             else:
