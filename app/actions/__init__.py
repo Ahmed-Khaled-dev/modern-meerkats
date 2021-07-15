@@ -1,4 +1,3 @@
-import itertools
 from typing import Protocol, Union
 
 from .move import Move
@@ -27,27 +26,6 @@ def action_from_str(user_input: str, entity: ActionableEntity) -> Action:
     cmd, _, tail = user_input.partition(" ")
     if cmd == "move":
         length, _, orientation = tail.partition(" ")
-        haltbable_actions = (x for x in entity.actions if hasattr(x, "halt_times"))
-        if orientation in ("left", "right"):
-            oriented_halts = list(
-                itertools.chain(
-                    *[
-                        x.halt_times
-                        for x in haltbable_actions
-                        if x.orientation in ("left", "right")
-                    ]
-                )
-            )
-        else:
-            oriented_halts = list(
-                itertools.chain(
-                    *[
-                        x.halt_times
-                        for x in haltbable_actions
-                        if x.orientation in ("up", "down")
-                    ]
-                )
-            )
         x, y = entity.last_pos
         return Move(
             pos_x=x,
@@ -57,7 +35,6 @@ def action_from_str(user_input: str, entity: ActionableEntity) -> Action:
             orientation=orientation,
             parent=entity.__class__,
             content=str(entity),
-            halt_times=oriented_halts,
         )
     else:
         raise ValueError
