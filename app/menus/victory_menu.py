@@ -1,5 +1,6 @@
 import asyncio
 from random import choice, randint
+from typing import Literal, Optional
 
 from asciimatics.effects import Mirage, Print, Stars
 from asciimatics.particles import (
@@ -9,6 +10,10 @@ from asciimatics.renderers import FigletText, Rainbow, SpeechBubble
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
+from app.types.events import Event
+
+_victory_key: Optional[Literal["n", "q"]] = None
+
 
 def update_screen(
     end_time: int, loop: asyncio.AbstractEventLoop, screen: Screen
@@ -16,11 +21,13 @@ def update_screen(
     """Checks if the user input matches with keys s or q."""
     event = screen.get_event()
     screen.draw_next_frame()
-
+    global _victory_key
     try:
         if event is not None and chr(event.key_code) == "n":
+            _victory_key = "n"
             loop.stop()
         elif event is not None and chr(event.key_code) == "q":
+            _victory_key = "q"
             loop.stop()
         else:
             if loop.time() < end_time:
@@ -35,7 +42,7 @@ def update_screen(
             loop.stop()
 
 
-def victory(screen: Screen) -> None:
+def victory(screen: Screen) -> Event:
     """Displays the victory screen."""
     scenes = []
     effects = [
@@ -111,3 +118,9 @@ def victory(screen: Screen) -> None:
     loop.close()
     screen.clear()
     screen.close()
+    if _victory_key == "n":
+        return Event.ToNextLevel
+    elif _victory_key == "q":
+        return Event.ToMainMenu
+    else:
+        return Event.ToNextLevel
