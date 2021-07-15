@@ -21,9 +21,7 @@ class LevelScreen(BaseModel):
     @property
     def term(self) -> Terminal:
         """Initialize and return a terminal to use in other applications"""
-        if not getattr(self, "_term"):
-            self._term = Terminal()
-        return self._term
+        return Terminal()
 
     def _render_user_input(self) -> None:
         print(clear_user_input_window(self.term))
