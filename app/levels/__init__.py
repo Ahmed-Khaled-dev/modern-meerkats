@@ -1,4 +1,3 @@
-import string
 from typing import Iterable
 
 from blessed import Terminal
@@ -128,11 +127,9 @@ class Level(BaseModel):
                 return [Event.UpdateCmdList, Event.UpdateInput]
             elif key.code == const.DEBUG_KEY:
                 return [Event.StartSequence, Event.EndLevel]
-            elif (
-                key.lower() in string.ascii_letters
-                or key in string.digits
-                or key == " "
-            ) and len(self.current_input) < const.INPUT_MAX_LENGTH:
+            elif (key.isalnum() or key.isspace()) and len(
+                self.current_input
+            ) < const.INPUT_MAX_LENGTH:
                 self.current_input += key.lower()
                 return [Event.UpdateInput]
 
