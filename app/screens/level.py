@@ -1,9 +1,12 @@
 import time
+from typing import Optional
 
+from asciimatics.screen import Screen
 from blessed import Terminal
 from pydantic import BaseModel
 
 from app.levels import Level
+from app.menus.victory_menu import victory
 from app.types.events import Event
 from app.types.state import LevelState
 from app.windows.utils import (
@@ -17,6 +20,7 @@ class LevelScreen(BaseModel):
     """The screen components for displaying a level"""
 
     level: Level
+    terminate_to: Optional[Event] = None
 
     @property
     def term(self) -> Terminal:
@@ -95,18 +99,26 @@ class LevelScreen(BaseModel):
                     time.sleep(0.2)
         elif event == Event.EndLevel:
             if self.level.current_state == LevelState.Win:
-                print("you made it out")
+                screen = Screen.open()
+                event = victory(screen)
+                self._handle_event(event)
             elif self.level.current_state == LevelState.ExitNotReached:
                 print("you failed to reach the exit")
+        elif event == Event.ToMainMenu or event == Event.ToNextLevel:
+            self.terminate_to = event
         print(self.level.user_input.prompt(self.term), end="", flush=True)
 
-    def launch(self) -> None:
+    def launch(self) -> Event:
         """Launches the level in fullscreen mode"""
         with self.term.fullscreen(), self.term.cbreak():
             self._render_initial()
-            while self.level.current_state not in LevelState.terminal():
+            while (
+                self.level.current_state not in LevelState.terminal()
+                and not self.terminate_to
+            ):
                 events = self.level.listen(self.term)
                 for e in events:
                     self._handle_event(e)
-            while True:
-                pass
+        if not self.terminate_to:
+            raise ValueError
+        return self.terminate_to
