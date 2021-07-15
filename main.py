@@ -3,7 +3,7 @@ from app.menus import start_menu
 from app.screens.level import LevelScreen
 from app.types.events import Event
 
-levels = [Level0(), Level0()]
+levels = [Level0, Level0]
 
 
 def main() -> None:
@@ -13,8 +13,13 @@ def main() -> None:
         if check is True:
             return
         for level in levels:
-            screen = LevelScreen(level=level)
-            event = screen.launch()
+            while True:
+                screen = LevelScreen(level=level())
+                event = screen.launch()
+                if event == Event.ToMainMenu:
+                    break
+                elif event == Event.RetryLevel:
+                    pass
             if event == Event.ToMainMenu:
                 break
             elif event == Event.ToNextLevel:

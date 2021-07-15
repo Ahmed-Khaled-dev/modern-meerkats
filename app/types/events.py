@@ -11,3 +11,4 @@ class Event(Enum):
     EndLevel = auto()
     ToNextLevel = auto()
     ToMainMenu = auto()
+    RetryLevel = auto()
