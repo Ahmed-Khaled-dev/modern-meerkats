@@ -14,22 +14,22 @@ Level0 = Level(
     entities=list(
         itertools.chain(
             # Start X Pos, Start Y Pos, Length, Vertical (v) or Horizontal (h)
-            # Left coloumn top horizontal line
+            # Left row - Top
             Wall.create_line(1, 1, 15, "h"),
-            # Left vertical vertical line
+            # Left coloumn
             Wall.create_line(1, 1, 38, "v"),
-            # Bottom big horizontal line
-            Wall.create_line(1, 38, 88, "h"),
-            # Right vertical line
+            # Right coloumn
             Wall.create_line(88, 1, 38, "v"),
-            # Right coloumn top horizontal line
+            # Right row - Top
             Wall.create_line(74, 1, 15, "h"),
-            # Middle right vertical line
+            # Middle coloumn - Right
             Wall.create_line(73, 1, 28, "v"),
-            # Middle big horizontal line
+            # Middle row
             Wall.create_line(16, 28, 57, "h"),
-            # Middle left vertical line
+            # Middle coloumn - Left
             Wall.create_line(15, 1, 28, "v"),
+            # Bottom row - Big
+            Wall.create_line(1, 38, 88, "h"),
             [Exit(pos_x=80, pos_y=3)],
         )
     ),
