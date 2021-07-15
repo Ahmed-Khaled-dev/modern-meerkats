@@ -12,15 +12,12 @@ class Exit(BaseModel):
     def __str__(self) -> str:
         return "🚪"
 
-    def to_hitbox(self, time: int) -> list[HitBox]:
-        """Convert entity to list of hitboxes"""
-        return [
-            HitBox(
-                pos_x=self.pos_x,
-                pos_y=self.pos_y,
-                content=str(self) if t > 0 else str(self) + "<-- exit",
-                time=t,
-                parent=self.__class__,
-            )
-            for t in range(0, time)
-        ]
+    def get_hitbox_at(self, time: int) -> HitBox:
+        """Get hitbox at a given time"""
+        return HitBox(
+            pos_x=self.pos_x,
+            pos_y=self.pos_y,
+            content=str(self) if time > 0 else str(self) + "<-- exit",
+            time=time,
+            parent=self.__class__,
+        )

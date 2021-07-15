@@ -1,93 +1,114 @@
-import string
 import time
 
+from blessed import Terminal
 from pydantic import BaseModel
 
-from app import constants as const
-from app.collisions import find_collisions, handle_collision
-from app.entities.player import Player
-from app.levels.level_test import TestLevel
+from app.levels import Level
+from app.types.events import Event
 from app.types.state import LevelState
-from app.windows.cmd_help import CmdHelpWindow
-from app.windows.cmd_list import CmdListwindow
-from app.windows.core import term
-from app.windows.map import MapWindow
-from app.windows.user_input import UserInputWindow
+from app.windows.utils import (
+    clear_cmdhelp_window, clear_cmdlist_window, clear_map_window,
+    clear_user_input_window, render_cmdhelp_border, render_cmdlist_border,
+    render_map_border, render_positioned_content, render_user_input_border
+)
 
 
 class LevelScreen(BaseModel):
     """The screen components for displaying a level"""
 
-    level: TestLevel
-    player: Player
-    cmd_list: CmdListwindow
-    cmd_help: CmdHelpWindow
-    user_input: UserInputWindow
-    state: LevelState = LevelState.Planning
+    level: Level
 
     @property
-    def map(self) -> MapWindow:
-        """Return the initial map window"""
-        return self.level.initial(self.player)
+    def term(self) -> Terminal:
+        """Initialize and return a terminal to use in other applications"""
+        if not getattr(self, "_term"):
+            self._term = Terminal()
+        return self._term
+
+    def _render_user_input(self) -> None:
+        print(clear_user_input_window(self.term))
+        print(
+            render_positioned_content(
+                pos_x=self.level.user_input.pos_x + 1,
+                pos_y=self.level.user_input.pos_y + 1,
+                lines=self.level.user_input.content_lines(self.term),
+                term=self.term,
+            )
+        )
+
+    def _render_cmd_list(self) -> None:
+        print(clear_cmdlist_window(self.term))
+        print(
+            render_positioned_content(
+                pos_x=self.level.cmd_list.pos_x + 1,
+                pos_y=self.level.cmd_list.pos_y + 1,
+                lines=self.level.cmd_list.content_lines(self.term),
+                term=self.term,
+            )
+        )
+
+    def _render_cmd_help(self) -> None:
+        print(clear_cmdhelp_window(self.term))
+        print(
+            render_positioned_content(
+                pos_x=self.level.cmd_help.pos_x + 1,
+                pos_y=self.level.cmd_help.pos_y + 1,
+                lines=self.level.cmd_help.content_lines(self.term),
+                term=self.term,
+            )
+        )
+
+    def _render_map_initial(self) -> None:
+        print(clear_map_window(self.term))
+        print(self.level.map_initial.content(self.term))
 
     def _render_initial(self) -> None:
-        print(term.clear)
-        print(self.user_input.window.border)
-        print(self.user_input.window.body)
-        print(self.cmd_help.window.border)
-        print(self.cmd_help.window.body)
-        print(self.cmd_list.window.border)
-        print(self.cmd_list.window.body)
-        print(self.map.window.border)
-        print(self.map.window.body)
-        print(self.map.content)
-        print(self.user_input.prompt, end="", flush=True)
+        print(self.term.clear)
+        # render borders
+        print(render_cmdlist_border(self.term))
+        print(render_user_input_border(self.term))
+        print(render_cmdhelp_border(self.term))
+        print(
+            render_map_border(
+                self.term, f"Level {self.level.number} - {self.level.title}"
+            )
+        )
+        # render initial content areas
+        self._render_cmd_help()
+        self._render_cmd_list()
+        self._render_user_input()
+        self._render_map_initial()
 
-    def _execute(self) -> None:
-        seq = self.level.sequence(self.player)
-        for w in seq:
-            collisions = find_collisions(w.boxes)
-            for col in collisions:
-                new_boxes, new_state = handle_collision(col, w.boxes, self.state)
-                w.boxes = new_boxes
-                self.state = new_state
-            print(w.window.body)
-            print(w.content)
-            if self.state in (LevelState.Win, LevelState.ExitNotReached):
-                break
+        # print user input and move cursor
+        print(self.level.user_input.prompt(self.term), end="", flush=True)
 
-            time.sleep(0.2)
+    def _handle_event(self, event: Event) -> None:
+        if event == Event.UpdateCmdList:
+            self._render_cmd_list()
+        elif event == Event.UpdateInput:
+            self._render_user_input()
+        elif event == Event.UpdateMap:
+            self._render_map_initial()
+        elif event == Event.StartSequence:
+            with self.term.hidden_cursor():
+                for window in self.level.map_sequence:
+                    print(clear_map_window(self.term))
+                    print(window.content(self.term))
+                    time.sleep(0.2)
+        elif event == Event.EndLevel:
+            if self.level.current_state == LevelState.Win:
+                print("you made it out")
+            elif self.level.current_state == LevelState.ExitNotReached:
+                print("you failed to reach the exit")
+        print(self.level.user_input.prompt(self.term), end="", flush=True)
 
     def launch(self) -> None:
         """Launches the level in fullscreen mode"""
-        with term.fullscreen(), term.cbreak():
+        with self.term.fullscreen(), self.term.cbreak():
             self._render_initial()
-            while self.state not in (LevelState.Win, LevelState.ExitNotReached):
-                if key := term.inkey():
-                    if key.code == const.BACKSPACE:
-                        self.user_input.current_input = self.user_input.current_input[
-                            :-1
-                        ]
-                        print(self.user_input.window.body)
-                    elif key.code == const.ENTER:
-                        self.cmd_list.issued_commands.append(
-                            self.user_input.current_input
-                        )
-                        self.user_input.current_input = ""
-                        print(self.cmd_list.window.body)
-                        print(self.user_input.window.body)
-                    elif key.code == const.DEBUG_KEY:
-                        with term.hidden_cursor():
-                            self._execute()
-                    elif (
-                        key.lower() in string.ascii_letters or key in string.digits
-                    ) and len(self.user_input.current_input) < const.INPUT_MAX_LENGTH:
-                        self.user_input.current_input += key.lower()
-                        print(self.user_input.window.body)
-                    print(self.user_input.prompt, end="", flush=True)
-            if self.state == LevelState.Win:
-                print("you win")
-            else:
-                print("you lose")
+            while self.level.current_state not in LevelState.terminal():
+                events = self.level.listen(self.term)
+                for e in events:
+                    self._handle_event(e)
             while True:
                 pass

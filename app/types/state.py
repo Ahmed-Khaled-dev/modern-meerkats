@@ -8,3 +8,8 @@ class LevelState(Enum):
     Planning = auto()
     Execution = auto()
     ExitNotReached = auto()
+
+    @classmethod
+    def terminal(cls) -> list["LevelState"]:
+        """States denoting that rendering has to stop"""
+        return [cls.Win, cls.ExitNotReached]

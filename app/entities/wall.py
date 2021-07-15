@@ -1,9 +1,9 @@
 from typing import Literal
 
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app.types.hitbox import HitBox
-from app.windows.core import term
 
 
 class Wall(BaseModel):
@@ -32,15 +32,13 @@ class Wall(BaseModel):
                 res.append(cls(pos_x=start_x + x, pos_y=start_y + y))
         return res
 
-    def to_hitbox(self, time: int) -> list[HitBox]:
-        """Transform wall to hitbox"""
-        return [
-            HitBox(
-                pos_x=self.pos_x,
-                pos_y=self.pos_y,
-                content=term.seashell4(self.char),
-                time=t,
-                parent=self.__class__,
-            )
-            for t in range(0, time)
-        ]
+    def get_hitbox_at(self, time: int) -> HitBox:
+        """Get hitbox at a given time"""
+        term = Terminal()
+        return HitBox(
+            pos_x=self.pos_x,
+            pos_y=self.pos_y,
+            content=term.seashell4(self.char),
+            time=time,
+            parent=self.__class__,
+        )
