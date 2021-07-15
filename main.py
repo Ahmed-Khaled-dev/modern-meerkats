@@ -3,7 +3,7 @@ from app.menus import start_menu
 from app.screens.level import LevelScreen
 from app.types.events import Event
 
-levels = [Level0, Level0]
+levels = [Level0(), Level0()]
 
 
 def main() -> None:
