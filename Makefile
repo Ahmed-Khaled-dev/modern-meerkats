@@ -1,2 +1,2 @@
 test:
-	PYTHONPATH=. pytest
+	PYTHONPATH=. pytest --ignore app/levels/level_test.py

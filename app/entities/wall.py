@@ -1,16 +1,16 @@
 from typing import Literal
 
-from blessed.formatters import FormattingString
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app.types.hitbox import HitBox
-from app.windows.core import term
 
 
-class _StaticEntity(BaseModel):
+class Wall(BaseModel):
+    """Entity denoting a unpassable structure"""
+
     pos_x: int
     pos_y: int
-    color: FormattingString
     char: str = "█"
 
     @classmethod
@@ -32,19 +32,13 @@ class _StaticEntity(BaseModel):
                 res.append(cls(pos_x=start_x + x, pos_y=start_y + y))
         return res
 
-    def to_hitbox(self, time: int) -> list[HitBox]:
-        return [
-            HitBox(
-                pos_x=self.pos_x,
-                pos_y=self.pos_y,
-                content=self.color(self.char),
-                time=t,
-            )
-            for t in range(0, time)
-        ]
-
-
-class Wall(_StaticEntity):
-    """A wall entity is an indestructable and inpassable entity for a player"""
-
-    color = term.seashell4
+    def get_hitbox_at(self, time: int) -> HitBox:
+        """Get hitbox at a given time"""
+        term = Terminal()
+        return HitBox(
+            pos_x=self.pos_x,
+            pos_y=self.pos_y,
+            content=term.seashell4(self.char),
+            time=time,
+            parent=self.__class__,
+        )

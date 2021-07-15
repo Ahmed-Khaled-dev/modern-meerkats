@@ -1,8 +1,8 @@
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
 from app.types.commands import Command as Cmd
-from app.windows.core import Window, term
 
 
 class CmdHelpWindow(BaseModel):
@@ -14,33 +14,20 @@ class CmdHelpWindow(BaseModel):
     pos_x: int = const.CMDHELP_X
     pos_y: int = const.CMDHELP_Y
 
-    @property
-    def _content(self) -> str:
-        return "\n".join(
-            [
-                term.center(
-                    "The available commands are:",
-                    width=self.width,
-                    fillchar=" ",
-                ),
-                "\n",
-                "\n".join(
-                    [
-                        term.center(c.value, width=self.width, fillchar=" ")
-                        for c in self.allowed_commands
-                    ]
-                ),
-            ]
-        )
-
-    @property
-    def window(self) -> Window:
-        """Return the window entity for command help"""
-        return Window(
-            title="Help",
-            width=self.width,
-            height=self.height,
-            pos_x=self.pos_x,
-            pos_y=self.pos_y,
-            content=self._content,
-        )
+    def content_lines(self, term: Terminal) -> list[str]:
+        """Return content lines to be rendered"""
+        base = [
+            "",
+            term.center(
+                "The available commands are:",
+                width=self.width,
+                fillchar=" ",
+            ),
+            "",
+            "",
+        ]
+        commands = [
+            term.yellow(term.center(c.value, width=self.width, fillchar=" "))
+            for c in self.allowed_commands
+        ]
+        return base + commands

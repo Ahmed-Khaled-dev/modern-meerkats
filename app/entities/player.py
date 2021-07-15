@@ -1,7 +1,6 @@
-from typing import Literal
-
 from pydantic import BaseModel
 
+from app.actions import Action
 from app.types.hitbox import HitBox
 
 
@@ -10,40 +9,46 @@ class Player(BaseModel):
 
     start_x: int
     start_y: int
-    moves: list[tuple[int, int]]
+    actions: list[Action] = []
 
     def __str__(self) -> str:
         return "🧛"
 
     @property
-    def _last_pos(self) -> tuple[int, int]:
-        if not self.moves:
-            return (self.start_x, self.start_y)
-        else:
-            return self.moves[-1]
-
-    def add_move(self, length: int, orientation: Literal["l", "r", "u", "d"]) -> None:
-        """Append a move to the player move list"""
-        for _ in range(0, length):
-            x, y = self._last_pos
-            if orientation == "u":
-                self.moves.append((x, y - 1))
-            elif orientation == "d":
-                self.moves.append((x, y + 1))
-            elif orientation == "l":
-                self.moves.append((x - 1, y))
-            elif orientation == "r":
-                self.moves.append((x + 1, y))
-
-    @property
     def initial(self) -> HitBox:
         """Initial state of the player"""
-        return HitBox(pos_x=self.start_x, pos_y=self.start_y, content=str(self), time=0)
+        return HitBox(
+            pos_x=self.start_x,
+            pos_y=self.start_y,
+            content=str(self),
+            time=0,
+            parent=self.__class__,
+        )
 
-    def to_hitbox(self) -> list[HitBox]:
-        """Convert Entity to hitboxes"""
-        steps = [
-            HitBox(pos_x=x, pos_y=y, content=str(self), time=i)
-            for i, (x, y) in enumerate(self.moves, start=1)
-        ]
-        return [self.initial] + steps
+    def get_action_at(self, time: int) -> Action:
+        """Get action at a given time"""
+        return [x for x in self.actions if x.time_start <= time <= x.time_end][0]
+
+    def get_hitbox_at(self, time: int) -> HitBox:
+        """Get hitbox at a given time"""
+        if time == 0:
+            return self.initial
+        else:
+            return self.get_action_at(time).get_hitbox_at(time)
+
+    @property
+    def last_pos(self) -> tuple[int, int]:
+        """Get the last known position for player"""
+        if not self.actions:
+            return (self.start_x, self.start_y)
+        else:
+            box = self.get_hitbox_at(self.time_consumed)
+            return box.pos_x, box.pos_y
+
+    @property
+    def time_consumed(self) -> int:
+        """How much time the player has consumed with the current actions"""
+        if not self.actions:
+            return 0
+        else:
+            return self.actions[-1].time_end

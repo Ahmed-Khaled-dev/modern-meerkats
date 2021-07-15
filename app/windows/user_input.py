@@ -1,9 +1,9 @@
 import math
 
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.windows.core import Window, term
 
 
 class UserInputWindow(BaseModel):
@@ -20,31 +20,19 @@ class UserInputWindow(BaseModel):
         row = self.pos_y + math.ceil(self.height / 2)
         return self.pos_x, row
 
-    @property
-    def prompt(self) -> str:
+    def prompt(self, term: Terminal) -> str:
         """Draw the prompt and move cursor to right location for input"""
         x, y = self._cursor_loc
         return term.move_xy(x + 2, y) + const.PROMPT_LINE + self.current_input
 
-    @property
-    def _content(self) -> str:
-        return "\n".join(
-            [
-                term.center(
-                    "What's your next command?", width=self.width, fillchar=" "
-                ),
-                "\n",
-            ]
-        )
-
-    @property
-    def window(self) -> Window:
-        """Return the window user input"""
-        return Window(
-            title="Input",
-            width=self.width,
-            height=self.height,
-            pos_x=self.pos_x,
-            pos_y=self.pos_y,
-            content=self._content,
-        )
+    def content_lines(self, term: Terminal) -> list[str]:
+        """Return content lines to be drawn"""
+        base = [
+            term.center(
+                term.bold(term.on_yellow("What's your next command?")),
+                width=self.width,
+                fillchar=" ",
+            ),
+            "",
+        ]
+        return base
