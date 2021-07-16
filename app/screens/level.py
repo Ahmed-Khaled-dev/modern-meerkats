@@ -3,6 +3,7 @@ import time
 from blessed import Terminal
 from pydantic import BaseModel
 
+from app import constants as const
 from app.levels import Level
 from app.types.events import Event
 from app.types.state import LevelState
@@ -106,6 +107,13 @@ class LevelScreen(BaseModel):
             self._render_initial()
             while self.level.current_state not in LevelState.terminal():
                 events = self.level.listen(self.term)
+                if(events == []):
+                    self._render_user_input()
+                    print(self.term.move_right(const.INPUT_X+1) + self.term.bold(
+                        "the entered command does not exist. Try Again"))
+                    time.sleep(2)
+                    self._render_initial()
+
                 for e in events:
                     self._handle_event(e)
             while True:

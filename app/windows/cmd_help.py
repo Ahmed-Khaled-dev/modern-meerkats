@@ -30,4 +30,11 @@ class CmdHelpWindow(BaseModel):
             term.yellow(term.center(c.value, width=self.width, fillchar=" "))
             for c in self.allowed_commands
         ]
-        return base + commands
+        syntax = [
+            "",
+            "",
+            term.center("SYNTAX", width=self.width, fillchar=" "),
+            "",
+            term.center("move [distance] [direction]", width=self.width, fillchar=" ")
+        ]
+        return base + commands + syntax

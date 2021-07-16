@@ -32,3 +32,13 @@ CMDHELP_Y = MAP_Y
 BACKSPACE = 263
 ENTER = 343
 DEBUG_KEY = 331  # insert
+
+# Commands
+VALID_COMMANDS = ["wait", "jump"]
+for i in range(MAP_WIDTH):
+    num = i
+    num = str(num)
+    VALID_COMMANDS.append("move " + num + " up")
+    VALID_COMMANDS.append("move " + num + " down")
+    VALID_COMMANDS.append("move " + num + " left")
+    VALID_COMMANDS.append("move " + num + " right")
