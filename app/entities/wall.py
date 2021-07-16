@@ -32,9 +32,8 @@ class Wall(BaseModel):
                 res.append(cls(pos_x=start_x + x, pos_y=start_y + y))
         return res
 
-    def get_hitbox_at(self, time: int) -> HitBox:
+    def get_hitbox_at(self, time: int, term: Terminal) -> HitBox:
         """Get hitbox at a given time"""
-        term = Terminal()
         return HitBox(
             pos_x=self.pos_x,
             pos_y=self.pos_y,

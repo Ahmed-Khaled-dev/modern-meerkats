@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Any, Iterable, Optional
 
 from blessed import Terminal
 from pydantic import BaseModel
@@ -29,6 +29,7 @@ class Level(BaseModel):
     state: dict[int, LevelState] = {0: LevelState.Planning}
     current_input: str = ""
     current_time: int = 0
+    term: Optional[Any] = None
 
     @property
     def current_state(self) -> LevelState:
@@ -47,7 +48,7 @@ class Level(BaseModel):
         """Get all hitboxes for a given time"""
         yield self.player.get_hitbox_at(time)
         for e in self.entities:
-            yield e.get_hitbox_at(time)
+            yield e.get_hitbox_at(time, self.term)
 
     def get_collisions_at(self, time: int) -> Iterable[tuple[HitBox, HitBox]]:
         """Identify all collisions at a given time"""

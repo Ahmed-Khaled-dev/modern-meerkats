@@ -1,3 +1,6 @@
+from typing import Optional
+
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app.types.hitbox import HitBox
@@ -12,7 +15,7 @@ class Exit(BaseModel):
     def __str__(self) -> str:
         return "🚪"
 
-    def get_hitbox_at(self, time: int) -> HitBox:
+    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
         """Get hitbox at a given time"""
         return HitBox(
             pos_x=self.pos_x,
