@@ -43,11 +43,11 @@ class Level(BaseModel):
             level_name=self.title, level_number=self.number, boxes=entity_boxes
         )
 
-    def get_boxes_at(self, time: int) -> list[HitBox]:
+    def get_boxes_at(self, time: int) -> Iterable[HitBox]:
         """Get all hitboxes for a given time"""
-        return [self.player.get_hitbox_at(time)] + [
-            e.get_hitbox_at(time) for e in self.entities
-        ]
+        yield self.player.get_hitbox_at(time)
+        for e in self.entities:
+            yield e.get_hitbox_at(time)
 
     def get_collisions_at(self, time: int) -> Iterable[tuple[HitBox, HitBox]]:
         """Identify all collisions at a given time"""
