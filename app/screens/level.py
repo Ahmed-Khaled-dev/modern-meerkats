@@ -12,6 +12,8 @@ from app.windows.utils import (
     render_map_border, render_positioned_content, render_user_input_border
 )
 
+term = Terminal()
+
 
 class LevelScreen(BaseModel):
     """The screen components for displaying a level"""
@@ -21,7 +23,7 @@ class LevelScreen(BaseModel):
     @property
     def term(self) -> Terminal:
         """Initialize and return a terminal to use in other applications"""
-        return Terminal()
+        return term
 
     def _render_user_input(self) -> None:
         print(clear_user_input_window(self.term))
@@ -83,6 +85,8 @@ class LevelScreen(BaseModel):
     def _handle_event(self, event: Event) -> None:
         if event == Event.UpdateCmdList:
             self._render_cmd_list()
+        elif event == Event.ResolveCollisions:
+            self.level.resolve_collisions()
         elif event == Event.UpdateInput:
             self._render_user_input()
         elif event == Event.UpdateMap:
@@ -102,6 +106,7 @@ class LevelScreen(BaseModel):
 
     def launch(self) -> None:
         """Launches the level in fullscreen mode"""
+        self.level.term = self.term
         with self.term.fullscreen(), self.term.cbreak():
             self._render_initial()
             while self.level.current_state not in LevelState.terminal():
