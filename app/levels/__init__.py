@@ -4,7 +4,7 @@ from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import Action, action_from_str
+from app.actions import action_from_str
 from app.entities import Exit, Player, Wall
 from app.types.commands import Command
 from app.types.events import Event
@@ -107,12 +107,12 @@ class Level(BaseModel):
         """Generate a user input window"""
         return UserInputWindow(current_input=self.current_input)
 
-    def add_player_action(self, action: Action) -> None:
-        """Add action to player and handle all collisions"""
-        current_time = self.player.time_consumed
-        self.player.actions.append(action)
-        for i in range(current_time, self.player.time_consumed + 1):
-            self.handle_collisions_at(i)
+    def resolve_collisions(self) -> None:
+        """Resolve collisions for the last action"""
+        last_action = self.player.actions[-1]
+        from_time = self.player.time_consumed - last_action.length
+        for t in range(from_time, self.player.time_consumed + 1):
+            self.handle_collisions_at(t)
 
     def listen(self, term: Terminal) -> list[Event]:
         """Listen and handle keyboard events"""
@@ -122,9 +122,9 @@ class Level(BaseModel):
                 return [Event.UpdateInput]
             elif key.code == const.ENTER:
                 action = action_from_str(self.current_input, self.player)
-                self.add_player_action(action)
+                self.player.actions.append(action)
                 self.current_input = ""
-                return [Event.UpdateCmdList, Event.UpdateInput]
+                return [Event.UpdateCmdList, Event.UpdateInput, Event.ResolveCollisions]
             elif key.code == const.DEBUG_KEY:
                 return [Event.StartSequence, Event.EndLevel]
             elif (key.isalnum() or key.isspace()) and len(

@@ -83,6 +83,8 @@ class LevelScreen(BaseModel):
     def _handle_event(self, event: Event) -> None:
         if event == Event.UpdateCmdList:
             self._render_cmd_list()
+        elif event == Event.ResolveCollisions:
+            self.level.resolve_collisions()
         elif event == Event.UpdateInput:
             self._render_user_input()
         elif event == Event.UpdateMap:
