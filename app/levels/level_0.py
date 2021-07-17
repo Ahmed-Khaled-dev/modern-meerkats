@@ -1,6 +1,6 @@
 import itertools
 
-from app.actions import Move, Wait
+from app.actions import Move
 from app.entities import Exit, Player, Wall
 
 from . import Level
@@ -36,5 +36,5 @@ def Level0() -> Level:
                 [Exit(pos_x=80, pos_y=3)],
             )
         ),
-        allowed_commands=[Move, Wait],
+        allowed_commands=[Move],
     )
