@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import Move, action_from_str
+from app.actions import Action, Wait, action_from_str
 from app.entities.utils import get_loop_time, invert_orientation, is_inverted
 from app.types import Orientation
 from app.types.hitbox import HitBox
@@ -85,7 +85,7 @@ class Patrol(BaseModel):
     start_x: int
     start_y: int
     orientation: Orientation
-    actions: list[Move] = []
+    actions: list[Action] = []
     char: str = const.PATROL
 
     def __str__(self) -> str:
@@ -113,7 +113,7 @@ class Patrol(BaseModel):
         """Amount of time the initial loop consumes"""
         return self.loop_interval
 
-    def get_move_at(self, time: int) -> Move:
+    def get_move_at(self, time: int) -> Action:
         """Get action at a given time"""
         return [x for x in self.actions if x.time_start <= time < x.time_end][0]
 
@@ -124,6 +124,8 @@ class Patrol(BaseModel):
             return self.orientation, (self.start_x, self.start_y)
         move = self.get_move_at(loop_time)
         box = move.get_hitbox_at(loop_time)
+        if isinstance(move, Wait):
+            return self.get_current_position(time - 1)
         if is_inverted(self.loop_interval, time):
             return invert_orientation(move.orientation), (box.pos_x, box.pos_y)
         else:

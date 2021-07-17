@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import Move, action_from_str
+from app.actions import Action, action_from_str
 from app.entities.utils import get_loop_time
 from app.types.hitbox import HitBox
 
@@ -13,7 +13,7 @@ class MovingWall(BaseModel):
 
     start_x: int
     start_y: int
-    actions: list[Move] = []
+    actions: list[Action] = []
     char: str = const.WALL
 
     def __str__(self) -> str:
@@ -56,7 +56,7 @@ class MovingWall(BaseModel):
         """Amount of time the initial loop consumes"""
         return self.loop_interval
 
-    def get_move_at(self, time: int) -> Move:
+    def get_move_at(self, time: int) -> Action:
         """Get action at a given time"""
         return [x for x in self.actions if x.time_start <= time < x.time_end][0]
 

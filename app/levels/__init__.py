@@ -4,7 +4,7 @@ from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import action_from_str
+from app.actions import Move, action_from_str
 from app.entities import Exit, MovingWall, Patrol, PatrolVision, Player, Wall
 from app.types.commands import Command
 from app.types.events import Event
@@ -78,7 +78,8 @@ class Level(BaseModel):
                 break
             elif parents == {Player, Wall} or parents == {Player, MovingWall}:
                 action = self.player.get_action_at(box_1.time)
-                action.halt_times.append(box_1.time)
+                if isinstance(action, Move):
+                    action.halt_times.append(box_1.time)
             elif parents == {Player, Patrol} or parents == {Player, PatrolVision}:
                 self.state[box_1.time] = LevelState.Spotted
                 break
