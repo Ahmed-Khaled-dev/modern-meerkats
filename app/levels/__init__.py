@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from app import constants as const
 from app.actions import action_from_str
-from app.entities import Exit, MovingWall, Player, Wall
+from app.entities import Exit, MovingWall, Patrol, PatrolVision, Player, Wall
 from app.types.commands import Command
 from app.types.events import Event
 from app.types.hitbox import HitBox
@@ -48,7 +48,14 @@ class Level(BaseModel):
         """Get all hitboxes for a given time"""
         yield self.player.get_hitbox_at(time)
         for e in self.entities:
-            yield e.get_hitbox_at(time, self.term)
+            if isinstance(e, Patrol):
+                for v in e.get_current_vision(time):
+                    box = v.get_hitbox_at(time, self.term)
+                    if box.in_bounds:
+                        yield box
+            box = e.get_hitbox_at(time, self.term)
+            if box.in_bounds:
+                yield box
 
     def get_collisions_at(self, time: int) -> Iterable[tuple[HitBox, HitBox]]:
         """Identify all collisions at a given time"""
@@ -68,9 +75,13 @@ class Level(BaseModel):
             parents = {box_1.parent, box_2.parent}
             if parents == {Player, Exit}:
                 self.state[box_1.time] = LevelState.Win
+                break
             elif parents == {Player, Wall} or parents == {Player, MovingWall}:
                 action = self.player.get_action_at(box_1.time)
                 action.halt_times.append(box_1.time)
+            elif parents == {Player, Patrol} or parents == {Player, PatrolVision}:
+                self.state[box_1.time] = LevelState.Spotted
+                break
             else:
                 pass
 
@@ -123,7 +134,7 @@ class Level(BaseModel):
                 return [Event.UpdateInput]
             elif key.code == const.ENTER:
                 action, flag = action_from_str(self.current_input, self.player)
-                if flag:
+                if flag and action:
                     self.player.actions.append(action)
                     self.current_input = ""
                     return [

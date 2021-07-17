@@ -34,16 +34,18 @@ def test_level_handles_collision_adequately_player_action_add():
         allowed_commands=[],
         term=Terminal(),
     )
-    action = action_from_str("move 5 right", level.player)
-    level.player.actions.append(action)
+    action, _ = action_from_str("move 5 right", level.player)
+    if action:
+        level.player.actions.append(action)
     level.resolve_collisions()
     assert level.player.actions[0].halt_times
 
 
 def test_level_handles_collisions_for_moving_walls():
     wall = MovingWall(start_x=2, start_y=1, actions=[])
-    wall_move = action_from_str("move 1 down", wall)
-    wall.actions.append(wall_move)
+    wall_move, _ = action_from_str("move 1 down", wall)
+    if wall_move:
+        wall.actions.append(wall_move)
     level = Level(
         title="",
         number=0,
@@ -54,9 +56,13 @@ def test_level_handles_collisions_for_moving_walls():
         allowed_commands=[],
         term=Terminal(),
     )
-    level.player.actions.append(action_from_str("move 1 right", level.player))
+    action, _ = action_from_str("move 1 right", level.player)
+    if action:
+        level.player.actions.append(action)
     level.resolve_collisions()
-    level.player.actions.append(action_from_str("move 1 right", level.player))
+    action, _ = action_from_str("move 1 right", level.player)
+    if action:
+        level.player.actions.append(action)
     level.resolve_collisions()
     assert level.player.actions[0].halt_times
     assert not level.player.actions[1].halt_times

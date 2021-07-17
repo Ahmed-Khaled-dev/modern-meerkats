@@ -1,3 +1,9 @@
+from blessed import Terminal
+
+## Assets
+term = Terminal()
+PATROL_VISION = term.azure4("█")
+
 WINDOW_PADDING = 1
 OFFSET_X = 5
 OFFSET_Y = 2

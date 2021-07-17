@@ -41,7 +41,8 @@ class MovingWall(BaseModel):
             )
             for a in actions:
                 action, _ = action_from_str(a, wall)
-                wall.actions.append(action)
+                if action:
+                    wall.actions.append(action)
             res.append(wall)
         return res
 
