@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from blessed import Terminal
 from pydantic import BaseModel
@@ -26,13 +26,18 @@ class MovingWall(BaseModel):
         start_y: int,
         length: int,
         actions: list[str],
+        orientation: Literal["v", "h"],
     ):
         """Creates an array of static assets to make a moving line"""
         res = []
         for i in range(0, length):
+            if orientation == "v":
+                x, y = start_x, start_y + i
+            else:
+                x, y = start_x + i, start_y
             wall = cls(
-                start_x=start_x,
-                start_y=start_y + i,
+                start_x=x,
+                start_y=y,
             )
             for a in actions:
                 action = action_from_str(a, wall)
