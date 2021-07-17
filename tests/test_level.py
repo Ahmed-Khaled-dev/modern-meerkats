@@ -41,13 +41,16 @@ def test_level_handles_collision_adequately_player_action_add():
 
 
 def test_level_handles_collisions_for_moving_walls():
+    wall = MovingWall(start_x=2, start_y=1, actions=[])
+    wall_move = action_from_str("move 1 down", wall)
+    wall.actions.append(wall_move)
     level = Level(
         title="",
         number=0,
         max_commands=3,
         description="",
         player=Player(start_x=1, start_y=2),
-        entities=[MovingWall(start_x=2, start_y=1, orientation="v", loop_interval=1)],
+        entities=[wall],
         allowed_commands=[],
         term=Terminal(),
     )

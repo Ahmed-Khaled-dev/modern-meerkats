@@ -1,8 +1,10 @@
-from typing import Literal
+from typing import Literal, Optional
 
 from blessed import Terminal
 from pydantic import BaseModel
 
+from app.actions import Move
+from app.entities.utils import get_loop_time
 from app.types.hitbox import HitBox
 
 
@@ -11,9 +13,11 @@ class MovingWall(BaseModel):
 
     start_x: int
     start_y: int
-    loop_interval: int
-    orientation: Literal["v", "h"]
+    actions: list[Move] = []
     char: str = "█"
+
+    def __str__(self) -> str:
+        return self.char
 
     @classmethod
     def create_line(
@@ -46,27 +50,38 @@ class MovingWall(BaseModel):
                 for i in range(0, length)
             ]
 
-    def get_displacement(self, time: int, reverse: bool = False) -> int:
-        """Calculate displacement form initial position"""
-        if time < self.loop_interval:
-            if reverse:
-                return self.loop_interval - time
-            else:
-                return time
-        else:
-            return self.get_displacement(time - self.loop_interval, not reverse)
+    @property
+    def loop_interval(self) -> int:
+        """Calculate the loop interval length"""
+        return sum([a.length for a in self.actions])
 
-    def get_hitbox_at(self, time: int, term: Terminal) -> HitBox:
+    @property
+    def time_consumed(self) -> int:
+        """Amount of time the initial loop consumes"""
+        return self.loop_interval
+
+    def get_move_at(self, time: int) -> Move:
+        """Get action at a given time"""
+        return [x for x in self.actions if x.time_start <= time < x.time_end][0]
+
+    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
         """Get hitbox at a given time"""
-        displacement = self.get_displacement(time)
-        if self.orientation == "h":
-            x, y = self.start_x + displacement, self.start_y
+        loop_time = get_loop_time(self.loop_interval, time)
+        if loop_time == 0:
+            return HitBox(
+                pos_x=self.start_x,
+                pos_y=self.start_y,
+                parent=self.__class__,
+                content=self.char,
+                time=time,
+            )
+        return self.get_move_at(loop_time).get_hitbox_at(loop_time)
+
+    @property
+    def last_pos(self) -> tuple[int, int]:
+        """Get the last known position for player"""
+        if not self.actions:
+            return (self.start_x, self.start_y)
         else:
-            x, y = self.start_x, self.start_y + displacement
-        return HitBox(
-            pos_x=x,
-            pos_y=y,
-            content=term.seashell4(self.char),
-            time=time,
-            parent=self.__class__,
-        )
+            box = self.get_move_at(self.time_consumed).get_hitbox_at(self.time_consumed)
+            return box.pos_x, box.pos_y

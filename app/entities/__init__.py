@@ -6,4 +6,4 @@ from .player import Player
 from .wall import Wall
 
 Entity = Union[Exit, Player, Wall, MovingWall]
-ActionableEntity = Union[Player]
+ActionableEntity = Union[Player, MovingWall]
