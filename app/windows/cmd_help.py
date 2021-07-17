@@ -30,4 +30,20 @@ class CmdHelpWindow(BaseModel):
             term.yellow(term.center(c.value, width=self.width, fillchar=" "))
             for c in self.allowed_commands
         ]
-        return base + commands
+        header = [
+            "",
+            "",
+            term.center(f"{term.orangered}SYNTAX{term.normal}/{term.yellow}EXAMPLE", width=self.width, fillchar=" "),
+            "",
+        ]
+        syntax = []
+        for c in self.allowed_commands:
+            if(c.value == "move"):
+                syntax.append(term.orangered(
+                    term.center("move [distance] [direction]", width=self.width, fillchar=" ")))
+                syntax.append(term.yellow(term.center("move 1 right", width=self.width, fillchar=" ")))
+            else:
+                syntax.append(term.orangered(term.center(c.value, width=self.width, fillchar=" ")))
+                syntax.append(term.yellow(term.center(c.value, width=self.width, fillchar=" ")))
+
+        return base + commands + header + syntax

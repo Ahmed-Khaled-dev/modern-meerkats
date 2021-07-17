@@ -1,5 +1,7 @@
 from typing import Protocol, Union
 
+from app import constants as const
+
 from .move import Move
 
 Action = Union[Move]
@@ -21,10 +23,10 @@ class ActionableEntity(Protocol):
         ...
 
 
-def action_from_str(user_input: str, entity: ActionableEntity) -> Action:
+def action_from_str(user_input: str, entity: ActionableEntity) -> tuple[Action, bool]:
     """Derive an action from a user string"""
     cmd, _, tail = user_input.partition(" ")
-    if cmd == "move":
+    if user_input in const.VALID_COMMANDS:
         length, _, orientation = tail.partition(" ")
         x, y = entity.last_pos
         return Move(
@@ -35,6 +37,6 @@ def action_from_str(user_input: str, entity: ActionableEntity) -> Action:
             orientation=orientation,
             parent=entity.__class__,
             content=str(entity),
-        )
+        ), True
     else:
-        raise ValueError
+        return None, False

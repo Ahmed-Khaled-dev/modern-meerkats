@@ -122,10 +122,18 @@ class Level(BaseModel):
                 self.current_input = self.current_input[:-1]
                 return [Event.UpdateInput]
             elif key.code == const.ENTER:
-                action = action_from_str(self.current_input, self.player)
-                self.player.actions.append(action)
-                self.current_input = ""
-                return [Event.UpdateCmdList, Event.UpdateInput, Event.ResolveCollisions]
+                action, flag = action_from_str(self.current_input, self.player)
+                if flag:
+                    self.player.actions.append(action)
+                    self.current_input = ""
+                    return [
+                        Event.UpdateCmdList,
+                        Event.UpdateInput,
+                        Event.ResolveCollisions,
+                    ]
+                else:
+                    self.current_input = ""
+                    return [Event.InvalidInput]
             elif key.code == const.DEBUG_KEY:
                 return [Event.StartSequence, Event.EndLevel]
             elif (key.isalnum() or key.isspace()) and len(

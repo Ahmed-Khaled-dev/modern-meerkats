@@ -5,6 +5,7 @@ from asciimatics.screen import Screen
 from blessed import Terminal
 from pydantic import BaseModel
 
+from app import constants as const
 from app.levels import Level
 from app.menus.gameover_menu import gameover
 from app.menus.victory_menu import victory
@@ -102,6 +103,12 @@ class LevelScreen(BaseModel):
                     print(clear_map_window(self.term))
                     print(window.content(self.term))
                     time.sleep(0.2)
+        elif event == Event.InvalidInput:
+            self._render_user_input()
+            print(self.term.move_right(const.INPUT_X+1) + self.term.bold(
+                self.term.underline("The entered command does not exist. Check the help window")))
+            time.sleep(3)
+            self._render_initial()
         elif event == Event.EndLevel:
             if self.level.current_state == LevelState.Win:
                 screen = Screen.open()
