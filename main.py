@@ -1,9 +1,12 @@
 from app.levels.level_0 import Level0
+from app.levels.level_1 import Level1
+from app.levels.level_2 import Level2
+from app.levels.level_3 import Level3
 from app.menus import start_menu, warning_menu
 from app.screens.level import LevelScreen
 from app.types.events import Event
 
-levels = [Level0, Level0]
+levels = [Level0, Level1, Level2, Level3]
 
 
 def main() -> None:
@@ -21,6 +24,8 @@ def main() -> None:
                     break
                 elif event == Event.RetryLevel:
                     pass
+                elif event == Event.ToNextLevel:
+                    break
             if event == Event.ToMainMenu:
                 break
             elif event == Event.ToNextLevel:

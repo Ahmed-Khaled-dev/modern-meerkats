@@ -9,9 +9,9 @@ from . import Level
 def Level0() -> Level:
     """Render the first level"""
     return Level(
-        title="Test Level",
+        title="Introduction",
         number=0,
-        max_commands=7,
+        max_commands=5,
         description="yolo",
         player=Player(start_x=7, start_y=3),
         entities=list(
