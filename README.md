@@ -8,3 +8,10 @@
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" /> kcaashish - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> 54bwy#4526
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" />  Sai-Shashank - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> greninja#8100
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" />  A-erospace - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> _ASP#0567
+
+
+## Installation
+`pip install -r requirements.txt`
+
+## Running the game
+`python main.py`
