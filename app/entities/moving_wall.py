@@ -1,9 +1,9 @@
-from typing import Literal, Optional
+from typing import Optional
 
 from blessed import Terminal
 from pydantic import BaseModel
 
-from app.actions import Move
+from app.actions import Move, action_from_str
 from app.entities.utils import get_loop_time
 from app.types.hitbox import HitBox
 
@@ -25,30 +25,20 @@ class MovingWall(BaseModel):
         start_x: int,
         start_y: int,
         length: int,
-        loop_interval: int,
-        orientation: Literal["v", "h"],
+        actions: list[str],
     ):
         """Creates an array of static assets to make a moving line"""
-        if orientation == "v":
-            return [
-                cls(
-                    start_x=start_x,
-                    start_y=start_y + i,
-                    loop_interval=loop_interval,
-                    orientation=orientation,
-                )
-                for i in range(0, length)
-            ]
-        else:
-            return [
-                cls(
-                    start_x=start_x + i,
-                    start_y=start_y,
-                    loop_interval=loop_interval,
-                    orientation=orientation,
-                )
-                for i in range(0, length)
-            ]
+        res = []
+        for i in range(0, length):
+            wall = cls(
+                start_x=start_x,
+                start_y=start_y + i,
+            )
+            for a in actions:
+                action = action_from_str(a, wall)
+                wall.actions.append(action)
+            res.append(wall)
+        return res
 
     @property
     def loop_interval(self) -> int:
