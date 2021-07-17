@@ -15,7 +15,7 @@ class Player(BaseModel):
     actions: list[Action] = []
 
     def __str__(self) -> str:
-        return "🧛"
+        return "@"
 
     @property
     def initial(self) -> HitBox:

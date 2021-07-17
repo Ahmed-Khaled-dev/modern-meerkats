@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from app import constants as const
 from app.actions import action_from_str
-from app.entities import Exit, Player, Wall
+from app.entities import Exit, MovingWall, Player, Wall
 from app.types.commands import Command
 from app.types.events import Event
 from app.types.hitbox import HitBox
@@ -68,7 +68,7 @@ class Level(BaseModel):
             parents = {box_1.parent, box_2.parent}
             if parents == {Player, Exit}:
                 self.state[box_1.time] = LevelState.Win
-            elif parents == {Player, Wall}:
+            elif parents == {Player, Wall} or parents == {Player, MovingWall}:
                 action = self.player.get_action_at(box_1.time)
                 action.halt_times.append(box_1.time)
             else:
