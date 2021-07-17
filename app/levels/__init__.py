@@ -1,12 +1,11 @@
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, Type
 
 from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import Move, action_from_str
+from app.actions import Action, Move, action_from_str
 from app.entities import Exit, MovingWall, Patrol, PatrolVision, Player, Wall
-from app.types.commands import Command
 from app.types.events import Event
 from app.types.hitbox import HitBox
 from app.types.state import LevelState
@@ -25,7 +24,7 @@ class Level(BaseModel):
     description: str
     player: Player
     entities: list
-    allowed_commands: list[Command]
+    allowed_commands: list[Type[Action]]
     state: dict[int, LevelState] = {0: LevelState.Planning}
     current_input: str = ""
     current_time: int = 0

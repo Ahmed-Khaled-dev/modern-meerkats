@@ -2,6 +2,7 @@ from typing import Literal, Type
 
 from pydantic import BaseModel
 
+from app.constants import term
 from app.types.hitbox import HitBox
 
 
@@ -44,3 +45,16 @@ class Move(BaseModel):
     def time_end(self) -> int:
         """The end time for the given action"""
         return self.time_start + self.length
+
+    @staticmethod
+    def name() -> str:
+        """Generate name"""
+        return term.yellow("move")
+
+    @staticmethod
+    def usage() -> list[str]:
+        """Generate usage strings"""
+        return [
+            term.orangered("move [distance] [direction]"),
+            term.yellow("move 1 right"),
+        ]
