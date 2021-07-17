@@ -23,7 +23,7 @@ class Move(BaseModel):
     def get_hitbox_at(self, time: int) -> HitBox:
         """Get the relevant hitbox at a given time"""
         halts = len([x for x in self.halt_times if time > x])
-        displacement = time - self.time_start - halts
+        displacement = (time - self.time_start - halts) + 1
         if time in self.halt_times:
             return self.get_hitbox_at(time=time - 1)
         elif self.orientation == "up":
