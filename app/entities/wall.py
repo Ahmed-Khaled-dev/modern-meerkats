@@ -1,8 +1,8 @@
 from typing import Literal
 
-from blessed import Terminal
 from pydantic import BaseModel
 
+from app import constants as const
 from app.types.hitbox import HitBox
 
 
@@ -11,7 +11,7 @@ class Wall(BaseModel):
 
     pos_x: int
     pos_y: int
-    char: str = "█"
+    char: str = const.WALL
 
     @classmethod
     def create_line(
@@ -32,12 +32,12 @@ class Wall(BaseModel):
                 res.append(cls(pos_x=start_x + x, pos_y=start_y + y))
         return res
 
-    def get_hitbox_at(self, time: int, term: Terminal) -> HitBox:
+    def get_hitbox_at(self, time: int) -> HitBox:
         """Get hitbox at a given time"""
         return HitBox(
             pos_x=self.pos_x,
             pos_y=self.pos_y,
-            content=term.seashell4(self.char),
+            content=self.char,
             time=time,
             parent=self.__class__,
         )

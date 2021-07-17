@@ -1,9 +1,9 @@
-from typing import Literal, Optional
+from typing import Literal
 
-from blessed import Terminal
 from pydantic import BaseModel
 
-from app.actions import Move, action_from_str
+from app import constants as const
+from app.actions import Action, action_from_str
 from app.entities.utils import get_loop_time
 from app.types.hitbox import HitBox
 
@@ -13,8 +13,8 @@ class MovingWall(BaseModel):
 
     start_x: int
     start_y: int
-    actions: list[Move] = []
-    char: str = "█"
+    actions: list[Action] = []
+    char: str = const.WALL
 
     def __str__(self) -> str:
         return self.char
@@ -41,7 +41,8 @@ class MovingWall(BaseModel):
             )
             for a in actions:
                 action, _ = action_from_str(a, wall)
-                wall.actions.append(action)
+                if action:
+                    wall.actions.append(action)
             res.append(wall)
         return res
 
@@ -55,11 +56,11 @@ class MovingWall(BaseModel):
         """Amount of time the initial loop consumes"""
         return self.loop_interval
 
-    def get_move_at(self, time: int) -> Move:
+    def get_move_at(self, time: int) -> Action:
         """Get action at a given time"""
         return [x for x in self.actions if x.time_start <= time < x.time_end][0]
 
-    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
+    def get_hitbox_at(self, time: int) -> HitBox:
         """Get hitbox at a given time"""
         loop_time = get_loop_time(self.loop_interval, time)
         if loop_time == 0:

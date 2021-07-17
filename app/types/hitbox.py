@@ -21,6 +21,17 @@ class HitBox(BaseModel):
     def __hash__(self) -> int:
         return hash((self.pos_x, self.pos_y, self.content, self.time))
 
+    @property
+    def in_bounds(self) -> bool:
+        """Check if hitbox is within the bounds of the map"""
+        conditions = [
+            self.pos_x >= const.MAP_X - const.OFFSET_X,
+            self.pos_x <= const.MAP_X + const.MAP_WIDTH - const.OFFSET_X,
+            self.pos_y >= const.MAP_Y - const.OFFSET_Y,
+            self.pos_y <= const.MAP_Y + const.MAP_HEIGHT - const.OFFSET_Y,
+        ]
+        return all(conditions)
+
     def render_str(self, term: Terminal) -> str:
         """Generate a renderable string for a hitbox"""
         x = self.pos_x + const.MAP_X + 1

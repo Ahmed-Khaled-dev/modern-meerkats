@@ -105,8 +105,14 @@ class LevelScreen(BaseModel):
                     time.sleep(0.2)
         elif event == Event.InvalidInput:
             self._render_user_input()
-            print(self.term.move_right(const.INPUT_X+1) + self.term.bold(
-                self.term.underline("The entered command does not exist. Check the help window")))
+            print(
+                self.term.move_right(const.INPUT_X + 1)
+                + self.term.bold(
+                    self.term.underline(
+                        "The entered command does not exist. Check the help window"
+                    )
+                )
+            )
             time.sleep(3)
             self._render_initial()
         elif event == Event.EndLevel:
@@ -116,7 +122,11 @@ class LevelScreen(BaseModel):
                 self._handle_event(event)
             elif self.level.current_state == LevelState.ExitNotReached:
                 screen = Screen.open()
-                event = gameover(screen)
+                event = gameover(screen, "You failed to reach the exit")
+                self._handle_event(event)
+            elif self.level.current_state == LevelState.Spotted:
+                screen = Screen.open()
+                event = gameover(screen, "You were spotted by a patrol")
                 self._handle_event(event)
         elif event in (Event.ToMainMenu, Event.ToNextLevel, Event.RetryLevel):
             self.terminate_to = event

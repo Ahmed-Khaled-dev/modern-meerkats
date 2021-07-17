@@ -1,10 +1,9 @@
-from typing import Protocol, Union
-
-from app import constants as const
+from typing import Optional, Protocol, Union
 
 from .move import Move
+from .wait import Wait
 
-Action = Union[Move]
+Action = Union[Move, Wait]
 
 
 class ActionableEntity(Protocol):
@@ -23,20 +22,38 @@ class ActionableEntity(Protocol):
         ...
 
 
-def action_from_str(user_input: str, entity: ActionableEntity) -> tuple[Action, bool]:
+def action_from_str(
+    user_input: str, entity: ActionableEntity
+) -> tuple[Optional[Action], bool]:
     """Derive an action from a user string"""
     cmd, _, tail = user_input.partition(" ")
-    if user_input in const.VALID_COMMANDS:
+    if cmd == "move":
         length, _, orientation = tail.partition(" ")
         x, y = entity.last_pos
-        return Move(
-            pos_x=x,
-            pos_y=y,
-            length=int(length),
-            time_start=entity.time_consumed + 1,
-            orientation=orientation,
-            parent=entity.__class__,
-            content=str(entity),
-        ), True
+        return (
+            Move(
+                pos_x=x,
+                pos_y=y,
+                length=int(length),
+                time_start=entity.time_consumed + 1,
+                orientation=orientation,
+                parent=entity.__class__,
+                content=str(entity),
+            ),
+            True,
+        )
+    elif cmd == "wait":
+        x, y = entity.last_pos
+        return (
+            Wait(
+                pos_x=x,
+                pos_y=y,
+                length=int(tail),
+                parent=entity.__class__,
+                time_start=entity.time_consumed + 1,
+                content=str(entity),
+            ),
+            True,
+        )
     else:
         return None, False

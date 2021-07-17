@@ -38,7 +38,7 @@ def update_screen(
             loop.stop()
 
 
-def gameover(screen: Screen) -> Event:
+def gameover(screen: Screen, fail_reason: str) -> Event:
     """Displays the gameover screen."""
     scenes = []
     effects = [
@@ -91,7 +91,7 @@ def gameover(screen: Screen) -> Event:
     effects.append(
         Print(
             screen,
-            SpeechBubble("Congratulations! you have been trapped."),
+            SpeechBubble(f"Congratulations! {fail_reason}."),
             screen.height // 2 - 8,
             speed=1,
             start_frame=5,
@@ -99,12 +99,15 @@ def gameover(screen: Screen) -> Event:
         )
     )
     effects.append(
-        Print(screen,
-              FigletText("GAME OVER!", "banner"),
-              screen.height // 2 - 17,
-              colour=Screen.COLOUR_RED,
-              bg=Screen.COLOUR_BLACK,
-              speed=1))
+        Print(
+            screen,
+            FigletText("GAME OVER!", "banner"),
+            screen.height // 2 - 17,
+            colour=Screen.COLOUR_RED,
+            bg=Screen.COLOUR_BLACK,
+            speed=1,
+        )
+    )
 
     scenes.append(Scene(effects, -1))
     screen.set_scenes(scenes)
