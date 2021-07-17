@@ -6,7 +6,7 @@ from blessed import Terminal
 from pydantic import BaseModel
 
 from app.levels import Level
-from app.menus.gameover_menu import game_over
+from app.menus.gameover_menu import gameover
 from app.menus.victory_menu import victory
 from app.types.events import Event
 from app.types.state import LevelState
@@ -104,10 +104,8 @@ class LevelScreen(BaseModel):
                 event = victory(screen)
                 self._handle_event(event)
             elif self.level.current_state == LevelState.ExitNotReached:
-                event = game_over(
-                    level_title=f"Level {self.level.number} - {self.level.title}",
-                    fail_reason="Failed to reach the exit",
-                )
+                screen = Screen.open()
+                event = gameover(screen)
                 self._handle_event(event)
         elif event in (Event.ToMainMenu, Event.ToNextLevel, Event.RetryLevel):
             self.terminate_to = event
