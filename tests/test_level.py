@@ -29,8 +29,8 @@ def test_level_handles_collision_adequately_player_action_add():
         number=0,
         max_commands=3,
         description="",
-        player=Player(start_x=1, start_y=1),
-        entities=Wall.create_line(3, 1, 5, "v"),
+        player=Player(start_x=6, start_y=6),
+        entities=Wall.create_line(8, 6, 5, "v"),
         allowed_commands=[],
         term=Terminal(),
     )
@@ -42,7 +42,7 @@ def test_level_handles_collision_adequately_player_action_add():
 
 
 def test_level_handles_collisions_for_moving_walls():
-    wall = MovingWall(start_x=2, start_y=1, actions=[])
+    wall = MovingWall(start_x=7, start_y=6, actions=[])
     wall_move, _ = action_from_str("move 1 down", wall)
     if wall_move:
         wall.actions.append(wall_move)
@@ -51,7 +51,7 @@ def test_level_handles_collisions_for_moving_walls():
         number=0,
         max_commands=3,
         description="",
-        player=Player(start_x=1, start_y=2),
+        player=Player(start_x=6, start_y=7),
         entities=[wall],
         allowed_commands=[],
         term=Terminal(),
