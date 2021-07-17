@@ -124,10 +124,13 @@ class Level(BaseModel):
             elif key.code == const.ENTER:
                 action, flag = action_from_str(self.current_input, self.player)
                 if flag:
-                    action = action_from_str(self.current_input, self.player)
                     self.player.actions.append(action)
                     self.current_input = ""
-                    return [Event.UpdateCmdList, Event.UpdateInput, Event.ResolveCollisions]
+                    return [
+                        Event.UpdateCmdList,
+                        Event.UpdateInput,
+                        Event.ResolveCollisions,
+                    ]
                 else:
                     self.current_input = ""
                     return [Event.InvalidInput]
