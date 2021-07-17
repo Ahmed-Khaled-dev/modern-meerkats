@@ -3,6 +3,10 @@ from blessed import Terminal
 ## Assets
 term = Terminal()
 PATROL_VISION = term.azure4("█")
+WALL = term.seashell4("█")
+PATROL = term.tomato("!")
+PLAYER = term.green("@")
+EXIT = term.brown("#")
 
 WINDOW_PADDING = 1
 OFFSET_X = 5

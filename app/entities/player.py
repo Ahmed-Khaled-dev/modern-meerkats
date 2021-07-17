@@ -1,8 +1,6 @@
-from typing import Optional
-
-from blessed import Terminal
 from pydantic import BaseModel
 
+from app import constants as const
 from app.actions import Action
 from app.types.hitbox import HitBox
 
@@ -15,7 +13,7 @@ class Player(BaseModel):
     actions: list[Action] = []
 
     def __str__(self) -> str:
-        return "@"
+        return const.PLAYER
 
     @property
     def initial(self) -> HitBox:
@@ -32,7 +30,7 @@ class Player(BaseModel):
         """Get action at a given time"""
         return [x for x in self.actions if x.time_start <= time <= x.time_end][0]
 
-    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
+    def get_hitbox_at(self, time: int) -> HitBox:
         """Get hitbox at a given time"""
         if time == 0:
             return self.initial

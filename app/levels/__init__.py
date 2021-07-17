@@ -50,10 +50,10 @@ class Level(BaseModel):
         for e in self.entities:
             if isinstance(e, Patrol):
                 for v in e.get_current_vision(time):
-                    box = v.get_hitbox_at(time, self.term)
+                    box = v.get_hitbox_at(time)
                     if box.in_bounds:
                         yield box
-            box = e.get_hitbox_at(time, self.term)
+            box = e.get_hitbox_at(time)
             if box.in_bounds:
                 yield box
 

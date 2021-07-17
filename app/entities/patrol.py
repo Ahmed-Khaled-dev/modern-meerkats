@@ -1,6 +1,5 @@
-from typing import Literal, Optional
+from typing import Literal
 
-from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
@@ -69,7 +68,7 @@ class PatrolVision(BaseModel):
             res += cls.create_line(x, y, l, o)
         return res
 
-    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
+    def get_hitbox_at(self, time: int) -> HitBox:
         """Get hitbox at a given time"""
         return HitBox(
             pos_x=self.pos_x,
@@ -87,7 +86,7 @@ class Patrol(BaseModel):
     start_y: int
     orientation: Orientation
     actions: list[Move] = []
-    char: str = "!"
+    char: str = const.PATROL
 
     def __str__(self) -> str:
         return self.char
@@ -130,7 +129,7 @@ class Patrol(BaseModel):
         else:
             return move.orientation, (box.pos_x, box.pos_y)
 
-    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
+    def get_hitbox_at(self, time: int) -> HitBox:
         """Get hitbox at a given time"""
         loop_time = get_loop_time(self.loop_interval, time)
         if loop_time == 0:
