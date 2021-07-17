@@ -11,7 +11,7 @@ class MovingWall(BaseModel):
 
     start_x: int
     start_y: int
-    duration: int
+    loop_interval: int
     orientation: Literal["v", "h"]
     char: str = "█"
 
@@ -21,7 +21,7 @@ class MovingWall(BaseModel):
         start_x: int,
         start_y: int,
         length: int,
-        duration: int,
+        loop_interval: int,
         orientation: Literal["v", "h"],
     ):
         """Creates an array of static assets to make a moving line"""
@@ -30,7 +30,7 @@ class MovingWall(BaseModel):
                 cls(
                     start_x=start_x,
                     start_y=start_y + i,
-                    duration=duration,
+                    loop_interval=loop_interval,
                     orientation=orientation,
                 )
                 for i in range(0, length)
@@ -40,7 +40,7 @@ class MovingWall(BaseModel):
                 cls(
                     start_x=start_x + i,
                     start_y=start_y,
-                    duration=duration,
+                    loop_interval=loop_interval,
                     orientation=orientation,
                 )
                 for i in range(0, length)
@@ -48,13 +48,13 @@ class MovingWall(BaseModel):
 
     def get_displacement(self, time: int, reverse: bool = False) -> int:
         """Calculate displacement form initial position"""
-        if time < self.duration:
+        if time < self.loop_interval:
             if reverse:
-                return self.duration - time
+                return self.loop_interval - time
             else:
                 return time
         else:
-            return self.get_displacement(time - self.duration, not reverse)
+            return self.get_displacement(time - self.loop_interval, not reverse)
 
     def get_hitbox_at(self, time: int, term: Terminal) -> HitBox:
         """Get hitbox at a given time"""
