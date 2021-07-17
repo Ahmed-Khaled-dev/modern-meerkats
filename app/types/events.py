@@ -10,3 +10,6 @@ class Event(Enum):
     UpdateCmdList = auto()
     StartSequence = auto()
     EndLevel = auto()
+    ToNextLevel = auto()
+    ToMainMenu = auto()
+    RetryLevel = auto()
