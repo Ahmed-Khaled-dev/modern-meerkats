@@ -1,10 +1,14 @@
 import time
+from typing import Optional
 
+from asciimatics.screen import Screen
 from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
 from app.levels import Level
+from app.menus.gameover_menu import gameover
+from app.menus.victory_menu import victory
 from app.types.events import Event
 from app.types.state import LevelState
 from app.windows.utils import (
@@ -13,16 +17,19 @@ from app.windows.utils import (
     render_map_border, render_positioned_content, render_user_input_border
 )
 
+term = Terminal()
+
 
 class LevelScreen(BaseModel):
     """The screen components for displaying a level"""
 
     level: Level
+    terminate_to: Optional[Event] = None
 
     @property
     def term(self) -> Terminal:
         """Initialize and return a terminal to use in other applications"""
-        return Terminal()
+        return term
 
     def _render_user_input(self) -> None:
         print(clear_user_input_window(self.term))
@@ -84,6 +91,8 @@ class LevelScreen(BaseModel):
     def _handle_event(self, event: Event) -> None:
         if event == Event.UpdateCmdList:
             self._render_cmd_list()
+        elif event == Event.ResolveCollisions:
+            self.level.resolve_collisions()
         elif event == Event.UpdateInput:
             self._render_user_input()
         elif event == Event.UpdateMap:
@@ -102,18 +111,29 @@ class LevelScreen(BaseModel):
             self._render_initial()
         elif event == Event.EndLevel:
             if self.level.current_state == LevelState.Win:
-                print("you made it out")
+                screen = Screen.open()
+                event = victory(screen)
+                self._handle_event(event)
             elif self.level.current_state == LevelState.ExitNotReached:
-                print("you failed to reach the exit")
+                screen = Screen.open()
+                event = gameover(screen)
+                self._handle_event(event)
+        elif event in (Event.ToMainMenu, Event.ToNextLevel, Event.RetryLevel):
+            self.terminate_to = event
         print(self.level.user_input.prompt(self.term), end="", flush=True)
 
-    def launch(self) -> None:
+    def launch(self) -> Event:
         """Launches the level in fullscreen mode"""
+        self.level.term = self.term
         with self.term.fullscreen(), self.term.cbreak():
             self._render_initial()
-            while self.level.current_state not in LevelState.terminal():
+            while (
+                self.level.current_state not in LevelState.terminal()
+                and not self.terminate_to
+            ):
                 events = self.level.listen(self.term)
                 for e in events:
                     self._handle_event(e)
-            while True:
-                pass
+        if not self.terminate_to:
+            raise ValueError
+        return self.terminate_to

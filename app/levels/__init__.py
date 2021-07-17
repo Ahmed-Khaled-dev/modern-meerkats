@@ -1,10 +1,10 @@
-from typing import Iterable
+from typing import Any, Iterable, Optional
 
 from blessed import Terminal
 from pydantic import BaseModel
 
 from app import constants as const
-from app.actions import Action, action_from_str
+from app.actions import action_from_str
 from app.entities import Exit, Player, Wall
 from app.types.commands import Command
 from app.types.events import Event
@@ -29,6 +29,7 @@ class Level(BaseModel):
     state: dict[int, LevelState] = {0: LevelState.Planning}
     current_input: str = ""
     current_time: int = 0
+    term: Optional[Any] = None
 
     @property
     def current_state(self) -> LevelState:
@@ -43,11 +44,11 @@ class Level(BaseModel):
             level_name=self.title, level_number=self.number, boxes=entity_boxes
         )
 
-    def get_boxes_at(self, time: int) -> list[HitBox]:
+    def get_boxes_at(self, time: int) -> Iterable[HitBox]:
         """Get all hitboxes for a given time"""
-        return [self.player.get_hitbox_at(time)] + [
-            e.get_hitbox_at(time) for e in self.entities
-        ]
+        yield self.player.get_hitbox_at(time)
+        for e in self.entities:
+            yield e.get_hitbox_at(time, self.term)
 
     def get_collisions_at(self, time: int) -> Iterable[tuple[HitBox, HitBox]]:
         """Identify all collisions at a given time"""
@@ -107,12 +108,12 @@ class Level(BaseModel):
         """Generate a user input window"""
         return UserInputWindow(current_input=self.current_input)
 
-    def add_player_action(self, action: Action) -> None:
-        """Add action to player and handle all collisions"""
-        current_time = self.player.time_consumed
-        self.player.actions.append(action)
-        for i in range(current_time, self.player.time_consumed + 1):
-            self.handle_collisions_at(i)
+    def resolve_collisions(self) -> None:
+        """Resolve collisions for the last action"""
+        last_action = self.player.actions[-1]
+        from_time = self.player.time_consumed - last_action.length
+        for t in range(from_time, self.player.time_consumed + 1):
+            self.handle_collisions_at(t)
 
     def listen(self, term: Terminal) -> list[Event]:
         """Listen and handle keyboard events"""
@@ -122,10 +123,11 @@ class Level(BaseModel):
                 return [Event.UpdateInput]
             elif key.code == const.ENTER:
                 action, flag = action_from_str(self.current_input, self.player)
-                if(flag is True):
-                    self.add_player_action(action)
+                if flag:
+                    action = action_from_str(self.current_input, self.player)
+                    self.player.actions.append(action)
                     self.current_input = ""
-                    return [Event.UpdateCmdList, Event.UpdateInput]
+                    return [Event.UpdateCmdList, Event.UpdateInput, Event.ResolveCollisions]
                 else:
                     self.current_input = ""
                     return [Event.InvalidInput]
