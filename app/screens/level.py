@@ -94,6 +94,12 @@ class LevelScreen(BaseModel):
                     print(clear_map_window(self.term))
                     print(window.content(self.term))
                     time.sleep(0.2)
+        elif event == Event.InvalidInput:
+            self._render_user_input()
+            print(self.term.move_right(const.INPUT_X+1) + self.term.bold(
+                self.term.underline("The entered command does not exist. Check the help window")))
+            time.sleep(3)
+            self._render_initial()
         elif event == Event.EndLevel:
             if self.level.current_state == LevelState.Win:
                 print("you made it out")
@@ -107,13 +113,6 @@ class LevelScreen(BaseModel):
             self._render_initial()
             while self.level.current_state not in LevelState.terminal():
                 events = self.level.listen(self.term)
-                if(events == []):
-                    self._render_user_input()
-                    print(self.term.move_right(const.INPUT_X+1) + self.term.bold(
-                        "the entered command does not exist. Try Again"))
-                    time.sleep(2)
-                    self._render_initial()
-
                 for e in events:
                     self._handle_event(e)
             while True:

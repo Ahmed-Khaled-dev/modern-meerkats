@@ -9,3 +9,4 @@ class Event(Enum):
     UpdateCmdList = auto()
     StartSequence = auto()
     EndLevel = auto()
+    InvalidInput = auto()

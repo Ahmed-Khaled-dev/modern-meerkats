@@ -23,7 +23,7 @@ class ActionableEntity(Protocol):
         ...
 
 
-def action_from_str(user_input: str, entity: ActionableEntity) -> Union[Action, bool]:
+def action_from_str(user_input: str, entity: ActionableEntity) -> tuple[Action, bool]:
     """Derive an action from a user string"""
     cmd, _, tail = user_input.partition(" ")
     if user_input in const.VALID_COMMANDS:

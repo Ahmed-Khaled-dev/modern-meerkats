@@ -128,7 +128,7 @@ class Level(BaseModel):
                     return [Event.UpdateCmdList, Event.UpdateInput]
                 else:
                     self.current_input = ""
-                    return []
+                    return [Event.InvalidInput]
             elif key.code == const.DEBUG_KEY:
                 return [Event.StartSequence, Event.EndLevel]
             elif (key.isalnum() or key.isspace()) and len(
