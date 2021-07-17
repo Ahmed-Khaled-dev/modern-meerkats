@@ -1,3 +1,6 @@
+from typing import Optional
+
+from blessed import Terminal
 from pydantic import BaseModel
 
 from app.actions import Action
@@ -29,7 +32,7 @@ class Player(BaseModel):
         """Get action at a given time"""
         return [x for x in self.actions if x.time_start <= time <= x.time_end][0]
 
-    def get_hitbox_at(self, time: int) -> HitBox:
+    def get_hitbox_at(self, time: int, term: Optional[Terminal] = None) -> HitBox:
         """Get hitbox at a given time"""
         if time == 0:
             return self.initial
