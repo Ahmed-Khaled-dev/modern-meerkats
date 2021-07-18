@@ -12,13 +12,13 @@
 </div>
 
 ## 📒 Table Of Contents
-- [About](#about)
-- [Frameworks](#frameworks)
-- [Setup](#setup)
+- [About](#🔰-about)
+- [Frameworks](#📚-frameworks)
+- [Setup](#🔌-setup)
   * [Installation](#installation)
   * [Running the game](#running-the-game)
-- [Team Members](#team_members)
-- [File Structure](#file-structure)
+- [Team Members](#🧑💻-team-members)
+- [File Structure](#📁-file-structure)
 
 ### 🔰 About
 All recent games have been about moving with WASD or jumping around or shooting, anything that is direct and easy and simple and ~~fun~~, what if we forced you to think inside A box and come up with some commands that do all the movement for you? So we introduce to you the **Inside The Box Adventure.**
@@ -39,7 +39,7 @@ All recent games have been about moving with WASD or jumping around or shooting,
 `python main.py`
 
 
-### 🧑‍🤝‍🧑 Team members:
+### 🧑💻 Team members:
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" /> Ahmed-Khaled-dev - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> Akayiz#0101
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" /> fliepeltje - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> donatas#7996
 - <img align="centre" alt="github" width="20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png" /> kcaashish - <img align="centre" alt="github" width="20px" src="https://discord.com/assets/3437c10597c1526c3dbd98c737c2bcae.svg" /> 54bwy#4526
