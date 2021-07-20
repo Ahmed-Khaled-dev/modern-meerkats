@@ -13,6 +13,7 @@
 
 ## 📒 Table Of Contents
 - [About](#🔰-about)
+  * [Showcase/Preview](#📚-showcase/preview)
 - [Frameworks](#📚-frameworks)
 - [Setup](#🔌-setup)
   * [Installation](#installation)
@@ -23,6 +24,8 @@
 
 ### 🔰 About
 All recent games have been about moving with WASD or jumping around or shooting, anything that is direct and easy and simple and ~~fun~~, what if we forced you to think inside A box and come up with some commands that do all the movement for you? So we introduce to you the **Inside The Box Adventure.**
+
+- #### Showcase/Preview : https://youtu.be/eDzVEWyPuz0
 
 ### 📚 Frameworks
 <a href="https://blessed.readthedocs.io/en/latest/intro.html">
